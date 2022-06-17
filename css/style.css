@@ -1,0 +1,126 @@
+/* @import url(https://allfont.net/allfont.css?fonts=clear-sans); */
+/* https://allfont.net/download/clear-sans/ */
+
+:root {
+  --background: #fbf8ef;
+
+  --dark-gray: #776e65;
+  --white: #f9f6f2;
+
+  --board-background: #bbada0;
+  --tile-background: #cdc1b4;
+
+  --tile-2: #eee4da;
+  --tile-4: #ede0c8;
+  --tile-8: #f2b179;
+  --tile-16: #f59563;
+  --tile-32: #f57c60;
+  --tile-64: #f65f3b;
+  --tile-128: #edcf73;
+  --tile-256: #edcc62;
+  --tile-512: #edc850;
+  --tile-1024: #edc540;
+  --tile-2048: #edc22d;
+}
+
+body {
+  background: var(--background);
+  font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+  color: var(--dark-gray);
+}
+
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.board {
+  width: 500px;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  background: var(--board-background);
+  padding: 15px;
+  display: grid;
+}
+
+.board-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.tile {
+  border-radius: 3px;
+  width: calc((100% - 3 * 15px) / 4);
+  height: calc((100% - 3 * 15px) / 4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 55px;
+  font-weight: 700;
+  background-color: var(--tile-background);
+  color: var(--white);
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.tile-empty {
+  background-color: var(--tile-background);
+}
+
+.tile-2 {
+  background-color: var(--tile-2);
+  color: var(--dark-gray);
+}
+
+.tile-4 {
+  background-color: var(--tile-4);
+  color: var(--dark-gray);
+}
+
+.tile-8 {
+  background-color: var(--tile-8);
+}
+
+.tile-16 {
+  background-color: var(--tile-16);
+}
+
+.tile-32 {
+  background-color: var(--tile-32);
+}
+
+.tile-64 {
+  background-color: var(--tile-64);
+}
+
+.tile-128 {
+  background-color: var(--tile-128);
+}
+
+.tile-256 {
+  background-color: var(--tile-256);
+}
+
+.tile-512 {
+  background-color: var(--tile-512);
+}
+
+.tile-1024 {
+  background-color: var(--tile-1024);
+}
+
+.tile-2048 {
+  background-color: var(--tile-2048);
+}
