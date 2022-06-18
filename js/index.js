@@ -1,18 +1,24 @@
-let BOARD_SIZE = 4;
+let BOARD_SIZE = 5;
 
 let randomTileValues = [2, 4];
 let state;
 
 function initGame() {
-  $(".board-layout-tiles .tile").html("").removeClass().addClass("tile");
+  // Fill board
+  $(".board-layout").empty();
+  for (let i = 0; i < BOARD_SIZE ** 2; i++) {
+    $(".board-layout").append(
+      $('<div class="tile"></div>').css({
+        width: `calc((100% - ${BOARD_SIZE - 1} * 15px) / ${BOARD_SIZE})`,
+        height: `calc((100% - ${BOARD_SIZE - 1} * 15px) / ${BOARD_SIZE})`,
+        fontSize: `${80 - BOARD_SIZE * 6}px`,
+      })
+    );
+  }
+
   state = new Array(BOARD_SIZE ** 2).fill(0);
   generateRandomTile();
   generateRandomTile();
-
-  // Tests
-  // updateState(0, 2);
-  // updateState(4, 4);
-  // updateState(12, 4);
 }
 
 function checkGameStatus() {
@@ -22,6 +28,7 @@ function checkGameStatus() {
   } else if (state.includes(0)) {
     return 0;
   } else {
+    //BUG: loss only if board is full and no more moves are possible
     alert("You lost 😔");
     return -1;
   }
@@ -35,9 +42,9 @@ function generateRandomTile() {
 
 function getRandomTile() {
   let tile;
-  while (checkGameStatus() === 0 && (tile === undefined || state[tile] != 0)) {
+  do {
     tile = Math.floor(Math.random() * state.length);
-  }
+  } while (checkGameStatus() === 0 && (tile === undefined || state[tile] != 0));
   return tile;
 }
 
@@ -60,22 +67,36 @@ function updateAllState() {
           .removeClass()
           .addClass(`tile tile-${currentState}`);
   }
+  checkGameStatus();
 }
 
 function updateState(noTile, value) {
   state[noTile] = value;
   $(`.board-layout-tiles .tile:eq(${noTile})`)
     .html(value)
-    .addClass(`tile-${value}`)
-    .css({ opacity: 0 })
-    .animate({ opacity: 1 });
+    .addClass(`tile-${value} appear`);
+
+  setTimeout(
+    () => $(`.board-layout-tiles .tile:eq(${noTile})`).removeClass("appear"),
+    300
+  );
 }
 
-function compressUp() {
+function rotateBoard() {
+  state = state.map((_, idx) => {
+    return state[
+      (idx % BOARD_SIZE) * BOARD_SIZE + Math.floor(idx / BOARD_SIZE)
+    ];
+  });
+}
+
+function compress() {
+  let generateNewTile = false;
+
   for (let col = 0; col < BOARD_SIZE; col++) {
     let curr = col;
 
-    for (let row = 1; row < BOARD_SIZE; row++) {
+    for (let row = 0; row < BOARD_SIZE; row++) {
       let idx = col + row * BOARD_SIZE;
 
       if (curr >= idx || state[idx] === 0) continue;
@@ -83,46 +104,69 @@ function compressUp() {
       if (state[curr] === 0) {
         state[curr] = state[idx];
         state[idx] = 0;
-        curr += BOARD_SIZE;
-        // merge, compression
+        generateNewTile = true;
       } else if (state[curr] === state[idx]) {
-        state[curr] *= 2;
+        state[curr] *= 2; // Merge tiles
         state[idx] = 0;
         curr += BOARD_SIZE;
-        // non merge, compression
+        generateNewTile = true;
       } else {
         curr += BOARD_SIZE;
         if (curr != idx) {
           state[curr] = state[idx];
           state[idx] = 0;
+          generateNewTile = true;
         }
       }
     }
   }
+  return generateNewTile;
+}
+
+function compressUp() {
+  let generateNewTile = compress();
   updateAllState();
-  generateRandomTile();
+  if (generateNewTile) generateRandomTile();
+  // checkGameStatus();
 }
 
 function compressDown() {
-  //TODO: implement
+  state = state.reverse();
+  let generateNewTile = compress();
+  state = state.reverse();
+  updateAllState();
+  if (generateNewTile) generateRandomTile();
+  // checkGameStatus();
 }
 
 function compressLeft() {
-  //TODO: implement
+  rotateBoard();
+  let generateNewTile = compress();
+  rotateBoard();
+  updateAllState();
+  if (generateNewTile) generateRandomTile();
 }
 
 function compressRight() {
-  //TODO: implement
-}
-
-function printState() {
-  console.log("current state:");
-  for (let col = 0; col < BOARD_SIZE; col++) {
-    console.log(state.slice(col * BOARD_SIZE, (col + 1) * BOARD_SIZE));
-  }
+  state = state.reverse();
+  rotateBoard();
+  let generateNewTile = compress();
+  rotateBoard();
+  state = state.reverse();
+  updateAllState();
+  if (generateNewTile) generateRandomTile();
+  // checkGameStatus();
 }
 
 $(function () {
+  BOARD_SIZE = +$("#board-size").val();
+
+  // Listen to board size change
+  $("#board-size").change(() => {
+    BOARD_SIZE = +$("#board-size").val();
+    initGame();
+  });
+
   // Initialize the game
   initGame();
 
