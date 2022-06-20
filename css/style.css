@@ -85,6 +85,11 @@ button:hover {
   cursor: pointer;
 }
 
+.footer {
+  font-size: 12px;
+  margin-top: 12px;
+}
+
 .board {
   width: 500px;
   aspect-ratio: 1;
