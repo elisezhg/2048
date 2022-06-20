@@ -1,73 +1,25 @@
 let BOARD_SIZE = 5;
 
-let randomTileValues = [2, 4];
+const randomTileValues = [2, 4];
 let state;
 
-function initGame() {
-  // Fill board
-  $(".board-layout").empty();
-  for (let i = 0; i < BOARD_SIZE ** 2; i++) {
-    $(".board-layout").append(
-      $('<div class="tile"></div>').css({
-        width: `calc((100% - ${BOARD_SIZE - 1} * 15px) / ${BOARD_SIZE})`,
-        height: `calc((100% - ${BOARD_SIZE - 1} * 15px) / ${BOARD_SIZE})`,
-        fontSize: `${80 - BOARD_SIZE * 6}px`,
-      })
-    );
-  }
-
-  state = new Array(BOARD_SIZE ** 2).fill(0);
-  generateRandomTile();
-  generateRandomTile();
-}
-
+// TODO
 function checkGameStatus() {
   if (state.includes(2048)) {
-    alert("You won 🤩");
+    alert('You won 🤩');
     return 1;
-  } else if (state.includes(0)) {
+  }
+  if (state.includes(0)) {
     return 0;
-  } else {
-    //BUG: loss only if board is full and no more moves are possible
-    alert("You lost 😔");
-    return -1;
   }
+  // BUG: loss only if board is full and no more moves are possible
+  alert('You lost 😔');
+  return -1;
 }
 
-function generateRandomTile() {
-  let noTile = getRandomTile();
-  let value = getRandomValue();
-  updateState(noTile, value);
-}
-
-function getRandomTile() {
-  let tile;
-  do {
-    tile = Math.floor(Math.random() * state.length);
-  } while (checkGameStatus() === 0 && (tile === undefined || state[tile] != 0));
-  return tile;
-}
-
-function getRandomValue() {
-  return randomTileValues[Math.floor(Math.random() * randomTileValues.length)];
-}
-
-function updateAllState() {
-  // printState();
-  for (let i = 0; i < state.length; i++) {
-    let currentState = state[i];
-
-    currentState === 0
-      ? $(`.board-layout-tiles .tile:eq(${i})`)
-          .html("")
-          .removeClass()
-          .addClass("tile")
-      : $(`.board-layout-tiles .tile:eq(${i})`)
-          .html(currentState)
-          .removeClass()
-          .addClass(`tile tile-${currentState}`);
-  }
-  checkGameStatus();
+function addToScore(value) {
+  const currentScore = +$('#score').text();
+  $('#score').text(currentScore + value);
 }
 
 function updateState(noTile, value) {
@@ -77,44 +29,165 @@ function updateState(noTile, value) {
     .addClass(`tile-${value} appear`);
 
   setTimeout(
-    () => $(`.board-layout-tiles .tile:eq(${noTile})`).removeClass("appear"),
-    300
+    () => $(`.board-layout-tiles .tile:eq(${noTile})`).removeClass('appear'),
+    200
   );
 }
 
-function rotateBoard() {
-  state = state.map((_, idx) => {
-    return state[
-      (idx % BOARD_SIZE) * BOARD_SIZE + Math.floor(idx / BOARD_SIZE)
-    ];
-  });
+function getRandomTile() {
+  let tile;
+  do {
+    tile = Math.floor(Math.random() * state.length);
+  } while (
+    checkGameStatus() === 0 &&
+    (tile === undefined || state[tile] !== 0)
+  );
+  return tile;
 }
 
-function compress() {
+function getRandomValue() {
+  return randomTileValues[Math.floor(Math.random() * randomTileValues.length)];
+}
+
+function generateRandomTile() {
+  setTimeout(() => {
+    updateState(getRandomTile(), getRandomValue());
+  }, 100);
+}
+
+function initGame() {
+  // Fill board
+  $('.board-layout').empty();
+  for (let i = 0; i < BOARD_SIZE ** 2; i++) {
+    $('.board-layout').append($('<div class="tile"></div>'));
+  }
+
+  // Initialize state
+  state = new Array(BOARD_SIZE ** 2).fill(0);
+  $('#score').text(0);
+
+  generateRandomTile();
+  generateRandomTile();
+}
+
+function rotateBoard() {
+  state = state.map(
+    (_, idx) =>
+      state[(idx % BOARD_SIZE) * BOARD_SIZE + Math.floor(idx / BOARD_SIZE)]
+  );
+}
+
+function animate(idx, curr, direction, pop) {
+  let idx2;
+  let curr2;
+  let movingUnit;
+
+  switch (direction) {
+    case 'up':
+      idx2 = idx;
+      curr2 = curr;
+      movingUnit = (curr - idx) / BOARD_SIZE;
+      break;
+    case 'down':
+      idx2 = BOARD_SIZE ** 2 - idx - 1;
+      curr2 = BOARD_SIZE ** 2 - curr - 1;
+      movingUnit = (curr2 - idx2) / BOARD_SIZE;
+      break;
+    case 'left':
+      idx2 = (idx % BOARD_SIZE) * BOARD_SIZE + Math.floor(idx / BOARD_SIZE);
+      curr2 = (curr % BOARD_SIZE) * BOARD_SIZE + Math.floor(curr / BOARD_SIZE);
+      movingUnit = curr2 - idx2;
+      break;
+    case 'right':
+      idx2 = BOARD_SIZE ** 2 - idx - 1;
+      curr2 = BOARD_SIZE ** 2 - curr - 1;
+      idx2 = (idx2 % BOARD_SIZE) * BOARD_SIZE + Math.floor(idx2 / BOARD_SIZE);
+      curr2 =
+        (curr2 % BOARD_SIZE) * BOARD_SIZE + Math.floor(curr2 / BOARD_SIZE);
+      movingUnit = curr2 - idx2;
+      break;
+    default:
+      break;
+  }
+
+  // Amimate non empty tile
+  if (
+    $(`.board-layout-tiles .tile:eq(${idx2})`)
+      .attr('class')
+      .indexOf('tile-') !== 1
+  ) {
+    $(`.board-layout-tiles .tile:eq(${idx2})`)
+      .addClass(
+        `move-${
+          direction === 'up' || direction === 'down' ? 'vertical' : 'horizontal'
+        }`
+      )
+      .css('--moving-unit', movingUnit);
+  }
+
+  const tmpCurr = curr2;
+  const tmpIdx = idx2;
+
+  setTimeout(() => {
+    // Erase old tile
+    $(`.board-layout-tiles .tile:eq(${tmpIdx})`)
+      .html('')
+      .css('--moving-unit', '')
+      .removeClass()
+      .addClass('tile');
+
+    // Place new tile
+    if (state[tmpCurr]) {
+      $(`.board-layout-tiles .tile:eq(${tmpCurr})`)
+        .html(state[tmpCurr])
+        .removeClass()
+        .addClass(`tile tile-${state[tmpCurr]} ${pop ? 'pop' : ''}`);
+    } else {
+      $(`.board-layout-tiles .tile:eq(${tmpCurr})`)
+        .html('')
+        .removeClass()
+        .addClass(`tile`);
+    }
+
+    // Set timer to remove pop class
+    if (pop) {
+      setTimeout(
+        () => $(`.board-layout-tiles .tile:eq(${tmpCurr})`).removeClass('pop'),
+        200
+      );
+    }
+  }, 100);
+}
+
+function compress(direction) {
   let generateNewTile = false;
 
   for (let col = 0; col < BOARD_SIZE; col++) {
     let curr = col;
 
     for (let row = 0; row < BOARD_SIZE; row++) {
-      let idx = col + row * BOARD_SIZE;
+      const idx = col + row * BOARD_SIZE;
 
       if (curr >= idx || state[idx] === 0) continue;
 
       if (state[curr] === 0) {
         state[curr] = state[idx];
         state[idx] = 0;
+        animate(idx, curr, direction);
         generateNewTile = true;
       } else if (state[curr] === state[idx]) {
         state[curr] *= 2; // Merge tiles
         state[idx] = 0;
+        animate(idx, curr, direction, true);
+        addToScore(state[curr]);
         curr += BOARD_SIZE;
         generateNewTile = true;
       } else {
         curr += BOARD_SIZE;
-        if (curr != idx) {
+        if (curr !== idx) {
           state[curr] = state[idx];
           state[idx] = 0;
+          animate(idx, curr, direction);
           generateNewTile = true;
         }
       }
@@ -124,46 +197,44 @@ function compress() {
 }
 
 function compressUp() {
-  let generateNewTile = compress();
-  updateAllState();
+  const generateNewTile = compress('up');
   if (generateNewTile) generateRandomTile();
   // checkGameStatus();
 }
 
 function compressDown() {
   state = state.reverse();
-  let generateNewTile = compress();
+  const generateNewTile = compress('down');
   state = state.reverse();
-  updateAllState();
   if (generateNewTile) generateRandomTile();
   // checkGameStatus();
 }
 
 function compressLeft() {
   rotateBoard();
-  let generateNewTile = compress();
+  const generateNewTile = compress('left');
   rotateBoard();
-  updateAllState();
   if (generateNewTile) generateRandomTile();
+  // checkGameStatus();
 }
 
 function compressRight() {
   state = state.reverse();
   rotateBoard();
-  let generateNewTile = compress();
+  const generateNewTile = compress('right');
   rotateBoard();
   state = state.reverse();
-  updateAllState();
   if (generateNewTile) generateRandomTile();
   // checkGameStatus();
 }
 
-$(function () {
-  BOARD_SIZE = +$("#board-size").val();
+$(() => {
+  BOARD_SIZE = +$('#board-size').val();
 
   // Listen to board size change
-  $("#board-size").change(() => {
-    BOARD_SIZE = +$("#board-size").val();
+  $('#board-size').change(() => {
+    BOARD_SIZE = +$('#board-size').val();
+    $(':root').css('--board-size', BOARD_SIZE);
     initGame();
   });
 
@@ -171,10 +242,21 @@ $(function () {
   initGame();
 
   // Reset the game
-  $("#reset").click(() => initGame());
+  $('#reset').click(() => initGame());
 
   // Handle keypresses
   $(document).keyup((e) => {
+    // Do not process if animation is in progress
+    let animationInProgress = false;
+
+    $('.tile').each((_, elem) => {
+      if ($(elem).attr('class').indexOf('move') !== -1) {
+        animationInProgress = true;
+      }
+    });
+
+    if (animationInProgress) return;
+
     switch (e.which) {
       case 87:
       case 38:
@@ -192,12 +274,14 @@ $(function () {
       case 39:
         compressRight();
         break;
+      case 82:
+        initGame();
+        break;
       default:
         break;
     }
   });
 });
 
-//TODO: add weight to the tiles
-//todo: save cookies?
-//todo: animation
+// TODO: add weight to the tiles
+// todo: save cookies?

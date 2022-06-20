@@ -1,6 +1,3 @@
-/* @import url(https://allfont.net/allfont.css?fonts=clear-sans); */
-/* https://allfont.net/download/clear-sans/ */
-
 :root {
   --background: #fbf8ef;
 
@@ -21,19 +18,71 @@
   --tile-512: #edc850;
   --tile-1024: #edc540;
   --tile-2048: #edc22d;
+
+  --board-size: 4;
 }
 
 body {
   background: var(--background);
-  font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
   color: var(--dark-gray);
+  width: 500px;
+  font-weight: bold;
+  margin: auto;
 }
 
-.center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.header {
+  margin: 30px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+h1 {
+  font-size: 88px;
+  margin: 0;
+}
+
+.score-box {
+  background: var(--board-background);
+  border-radius: 3px;
+  padding: 5px;
+  width: 120px;
+  font-size: 16px;
+  color: var(--tile-2);
+  text-align: center;
+  margin: auto 0 20px auto;
+}
+
+#score {
+  color: var(--white);
+  display: block;
+  font-size: 24px;
+}
+
+select {
+  background: var(--tile-2);
+  color: var(--dark-gray);
+  border-radius: 3px;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  margin-right: 20px;
+}
+
+button {
+  background: var(--dark-gray);
+  border-radius: 3px;
+  border: none;
+  padding: 10px;
+  width: 130px;
+  font-size: 16px;
+  color: var(--white);
+}
+
+button:hover {
+  background: var(--tile-2);
+  color: var(--dark-gray);
+  cursor: pointer;
 }
 
 .board {
@@ -43,6 +92,7 @@ body {
   background: var(--board-background);
   padding: 15px;
   display: grid;
+  box-sizing: border-box;
 }
 
 .board-layout {
@@ -51,9 +101,11 @@ body {
   gap: 15px;
   grid-column: 1;
   grid-row: 1;
+  overflow: hidden;
 }
 
 .tile {
+  --moving-unit: 1;
   border-radius: 3px;
   display: flex;
   justify-content: center;
@@ -61,10 +113,13 @@ body {
   font-weight: 700;
   background-color: var(--tile-background);
   color: var(--white);
+  width: calc((100% - (var(--board-size) - 1) * 15px) / var(--board-size));
+  height: calc((100% - (var(--board-size) - 1) * 15px) / var(--board-size));
+  font-size: calc(80px - var(--board-size) * 6px);
 }
 
 .appear {
-  animation: appear 200ms ease 100ms;
+  animation: appear 150ms ease;
   animation-fill-mode: backwards;
 }
 
@@ -78,15 +133,35 @@ body {
 }
 
 .pop {
-  animation: pop 200ms ease-in-out;
+  animation: pop 200ms ease;
+  animation-fill-mode: backwards;
 }
 
 @keyframes pop {
-  from {
-    transform: scale(1);
-  }
-  to {
+  50% {
     transform: scale(1.2);
+  }
+}
+
+.move-vertical {
+  animation: move-vertical 100ms ease;
+  animation-fill-mode: forwards;
+}
+
+@keyframes move-vertical {
+  100% {
+    transform: translateY(calc(var(--moving-unit) * (100% + 15px)));
+  }
+}
+
+.move-horizontal {
+  animation: move-horizontal 100ms ease;
+  animation-fill-mode: forwards;
+}
+
+@keyframes move-horizontal {
+  100% {
+    transform: translateX(calc(var(--moving-unit) * (100% + 15px)));
   }
 }
 
