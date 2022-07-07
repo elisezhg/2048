@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="js/index.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
     <link rel="stylesheet" href="css/style.css"></link>
     <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?"></link>
     
@@ -13,7 +14,7 @@
       <h1>2048</h1>
       
       <div>
-        <div class="score-box">Score <span id="score">0</span></div>
+        <div class="total-moves-box">Total Moves <span id="total-moves">0</span></div>
         
         <select name="board-size" id="board-size">
           <option value="4" selected="selected">4x4</option>
@@ -21,23 +22,21 @@
           <option value="6">6x6</option>
           <option value="7">7x7</option>
           <option value="8">8x8</option>
-          <option value="9">9x9</option>
-          <option value="10">10x10</option>
         </select>
         
         <button id="reset">New Game</button>
       </div>
     </div>
 
-    <div class="board center">
+    <div class="board">
       <div class="board-layout">
       </div>
       <div class="board-layout board-layout-tiles">
       </div>
     </div>
 
-    <div class="footer">
+    <footer>
       Elise Zheng &copy; 2022
-    </div>
+    </footer>
   </body>
 </html>

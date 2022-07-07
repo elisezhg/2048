@@ -42,18 +42,24 @@ h1 {
   margin: 0;
 }
 
-.score-box {
-  background: var(--board-background);
+select,
+button,
+.total-moves-box {
   border-radius: 3px;
-  padding: 5px;
-  width: 120px;
+  border: none;
+  padding: 10px;
   font-size: 16px;
+}
+
+.total-moves-box {
+  background: var(--board-background);
+  width: 110px;
   color: var(--tile-2);
   text-align: center;
   margin: auto 0 20px auto;
 }
 
-#score {
+#total-moves {
   color: var(--white);
   display: block;
   font-size: 24px;
@@ -62,20 +68,12 @@ h1 {
 select {
   background: var(--tile-2);
   color: var(--dark-gray);
-  border-radius: 3px;
-  border: none;
-  padding: 10px;
-  font-size: 16px;
   margin-right: 20px;
 }
 
 button {
   background: var(--dark-gray);
-  border-radius: 3px;
-  border: none;
-  padding: 10px;
   width: 130px;
-  font-size: 16px;
   color: var(--white);
 }
 
@@ -85,13 +83,12 @@ button:hover {
   cursor: pointer;
 }
 
-.footer {
+footer {
   font-size: 12px;
   margin-top: 12px;
 }
 
 .board {
-  width: 500px;
   aspect-ratio: 1;
   border-radius: 6px;
   background: var(--board-background);
@@ -106,7 +103,6 @@ button:hover {
   gap: 15px;
   grid-column: 1;
   grid-row: 1;
-  overflow: hidden;
 }
 
 .tile {
@@ -115,13 +111,14 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: 700;
   background-color: var(--tile-background);
   color: var(--white);
   width: calc((100% - (var(--board-size) - 1) * 15px) / var(--board-size));
   height: calc((100% - (var(--board-size) - 1) * 15px) / var(--board-size));
   font-size: calc(80px - var(--board-size) * 6px);
 }
+
+/* Animations */
 
 .appear {
   animation: appear 150ms ease;
@@ -170,6 +167,8 @@ button:hover {
   }
 }
 
+/* Tile Styles */
+
 .tile-empty {
   background-color: var(--tile-background);
 }
@@ -202,20 +201,25 @@ button:hover {
 
 .tile-128 {
   background-color: var(--tile-128);
+  font-size: calc(70px - var(--board-size) * 6px);
 }
 
 .tile-256 {
   background-color: var(--tile-256);
+  font-size: calc(70px - var(--board-size) * 6px);
 }
 
 .tile-512 {
   background-color: var(--tile-512);
+  font-size: calc(70px - var(--board-size) * 6px);
 }
 
 .tile-1024 {
   background-color: var(--tile-1024);
+  font-size: calc(65px - var(--board-size) * 6px);
 }
 
 .tile-2048 {
   background-color: var(--tile-2048);
+  font-size: calc(65px - var(--board-size) * 6px);
 }
