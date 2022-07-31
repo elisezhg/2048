@@ -319,19 +319,19 @@ $(() => {
 
     switch (e.key.toLowerCase()) {
       case 'w':
-      case 'up':
+      case 'arrowup':
         compressUp();
         break;
       case 's':
-      case 'down':
+      case 'arrowdown':
         compressDown();
         break;
       case 'a':
-      case 'left':
+      case 'arrowleft':
         compressLeft();
         break;
       case 'd':
-      case 'right':
+      case 'arrowright':
         compressRight();
         break;
       case 'r':
